@@ -3,12 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="./assets/logo.png" type="image/png" />
     <link rel="stylesheet" href="style.css" />
     <script src="script.js" defer></script>
     <title>Tic Tac Toe</title>
   </head>
   <body>
-    <h1 id="mode-title"></h1>
+    <h1 id="mode-title" class="title"></h1>
+
     <div class="play-board">
       <div class="board-row">
         <div class="row-col"></div>
@@ -29,23 +31,27 @@
       </div>
     </div>
 
+    <div class="game-notif"></div>
+
     <div class="players-panel">
       <div class="player-card">
-        <p>Player 1</p>
-        <img src="" alt="" />
-        <p></p>
+        <p class="player-name"></p>
+        <img src="./assets/X-removedBg.png" alt="" class="player-mark" />
+        <p class="player-score"></p>
       </div>
 
       <div class="player-card">
-        <p>Player 2</p>
-        <img src="" alt="" />
-        <p></p>
+        <p class="player-name"></p>
+        <img src="./assets/O-removedBg.png" alt="" class="player-mark" />
+        <p class="player-score"></p>
       </div>
     </div>
 
-    <div class="back-button">
-      <a href="./index.html" class="link-button">Back to Main Menu</a>
+    <div class="button-list">
+      <a href="./index.html" class="btn-default" id="back-btn">Main Menu</a>
+      <button class="btn-default restart" id="restart-btn">
+        <img src="./assets/reload.png" alt="" />Restart
+      </button>
     </div>
-    <!-- Tambahin span di text a kalau nanti mau diubah -->
   </body>
 </html>

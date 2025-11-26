@@ -1,4 +1,19 @@
-// Player Input (Player Move)
+// Function for placing mark on the board
+function placeMark(symbol, index) {
+  const mark = document.createElement("img");
+
+  mark.src = `./assets/${symbol}-removedBg.png`;
+  mark.classList.add("mark");
+
+  const cells = document.querySelectorAll(".row-col");
+  cells[index].appendChild(mark);
+
+  // Add a delay to ensure transition runs correctly
+  requestAnimationFrame(() => {
+    mark.classList.add("active");
+  });
+}
+
 function handleInput(game, nextMove) {
   const cells = document.querySelectorAll(".row-col");
 
@@ -7,7 +22,8 @@ function handleInput(game, nextMove) {
       if (game.endGame === true) return;
       if (game.board[index] === "") {
         game.board[index] = game.player;
-        cell.innerHTML += `<img src="./assets/${game.player}-removedBg.png" alt="cross-icon" class="mark">`;
+
+        placeMark(game.player, index);
 
         if (nextMove) {
           nextMove();
@@ -17,26 +33,23 @@ function handleInput(game, nextMove) {
   });
 }
 
-// Bot Move
 function botMove(board) {
+  //find empty cells
   const emptyCell = [];
-
-  // Check empty square
   for (let i = 0; i < board.length; i++) {
     if (board[i] === "") emptyCell.push(i);
   }
 
   if (emptyCell.length === 0) return;
-  // Random for bot to move
-  let move = Math.floor(Math.random() * emptyCell.length);
-  board[emptyCell[move]] = "O";
-  const cells = document.querySelectorAll(".row-col");
-  cells[
-    emptyCell[move]
-  ].innerHTML += `<img src="./assets/O-removedBg.png" alt="cross-icon" class="mark">`;
+
+  // pick random empty cell
+  const move = emptyCell[Math.floor(Math.random() * emptyCell.length)];
+
+  board[move] = "O";
+  placeMark("O", move);
+  console.log(move);
 }
 
-// Winnning Condition
 const winningCondition = [
   // Check Vertical Cell (Col)
   [0, 3, 6],
@@ -83,21 +96,50 @@ function checkDraw(board) {
   return check;
 }
 
-// Vs Player
+function printPlayerCard(game, gameMode) {
+  const cards = document.querySelectorAll(".player-card");
+  cards.forEach((card, index) => {
+    const player = card.querySelector(".player-name");
+    const score = card.querySelector(".player-score");
+    if (gameMode === "player") {
+      if (index === 0) player.textContent = "Player 1";
+      else player.textContent = "Player 2";
+    } else {
+      if (index === 0) player.textContent = "Player 1";
+      else player.textContent = "Bot";
+    }
+
+    if (index === 0) score.textContent = `Score: ${game.score1}`;
+    else score.textContent = `Score: ${game.score2}`;
+  });
+}
+
+function printResult(winner) {
+  const notif = document.querySelector(".game-notif");
+  notif.textContent = winner;
+}
+
+// Game Mode Function (vs. Player & vs. Bot)
 function playerMode(game) {
   handleInput(game, () => {
     if (checkWinner(game.board, winningCondition) === "X") {
       game.endGame = true;
-      console.log("Player 1 Wins");
+      game.score1++;
+      localStorage.setItem("score1", game.score1);
+      printPlayerCard(game, "player");
+      printResult("Player 1 Wins!");
       return;
     } else if (checkWinner(game.board, winningCondition) === "O") {
       game.endGame = true;
-      console.log("Player 2 Wins");
+      game.score2++;
+      localStorage.setItem("score2", game.score2);
+      printPlayerCard(game, "player");
+      printResult("Player 2 Wins!");
     }
 
     if (checkDraw(game.board)) {
       game.end = true;
-      console.log("Draw");
+      printResult("It's a Draw!");
     }
 
     if (game.player === "X") game.player = "O";
@@ -105,23 +147,29 @@ function playerMode(game) {
   });
 }
 
-// Vs Bot
 function botMode(game) {
-  // Ada 2 possibility nanti tambagin coin flip buat nentuin urutannya siapa duluan
   handleInput(game, () => {
     if (checkDraw(game.board)) {
       game.end = true;
-      console.log("Draw");
+      printResult("It's a Draw!");
     }
     if (checkWinner(game.board, winningCondition) === "X") {
       game.endGame = true;
-      console.log("Player Wins");
+      game.score1++;
+      localStorage.setItem("score1", game.score1);
+
+      printPlayerCard(game, "bot");
+      printResult("Player Wins!");
       return;
     }
     botMove(game.board);
     if (checkWinner(game.board, winningCondition) === "O") {
       game.endGame = true;
-      console.log("Bot Wins");
+      game.score2++;
+      localStorage.setItem("score2", game.score2);
+
+      printPlayerCard(game, "bot");
+      printResult("Bot Wins!");
       return;
     }
   });
@@ -133,13 +181,16 @@ function gameFunction(gameMode) {
     board: new Array(9).fill(""),
     endGame: false,
     player: "X",
+    score1: parseInt(localStorage.getItem("score1") || 0),
+    score2: parseInt(localStorage.getItem("score2") || 0),
   };
-
   if (gameMode === "player") {
     playerMode(game);
   } else {
     botMode(game);
   }
+
+  printPlayerCard(game, gameMode);
 }
 
 // Getting the mode choosen by player (vs. bot or vs. player)
@@ -154,3 +205,15 @@ if (mode === "bot") {
   title.textContent = "Player Vs. Player";
   gameFunction("player");
 }
+
+const backButton = document.getElementById("back-btn");
+const restartButton = document.getElementById("restart-btn");
+
+backButton.addEventListener("click", () => {
+  localStorage.removeItem("score1");
+  localStorage.removeItem("score2");
+});
+
+restartButton.addEventListener("click", () => {
+  location.reload();
+});

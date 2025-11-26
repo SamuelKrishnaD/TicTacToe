@@ -3,17 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="./assets/logo.png" type="image/png" />
     <script src="./script.js" defer></script>
     <link rel="stylesheet" href="./style.css" />
     <title>Tic Tac Toe</title>
   </head>
   <body>
-    <h1>Tic Tac Toe</h1>
+    <h1 class="title">Tic Tac Toe</h1>
+    <p class="menu-desc">Choose your game mode</p>
+
     <div class="game-mode">
-      <a href="./game.html?=player" class="link-button" id="player"
-        >Player Vs. Player</a
-      >
-      <a href="./game.html?=bot" class="link-button" id="bot">Player Vs. Bot</a>
+      <a href="./game.html?=player" class="mode-button" id="player">
+        <img src="./assets/group.png" alt="" class="mode-btn-img" />
+        <p class="mode-btn-text">Player Vs. Player</p>
+      </a>
+
+      <a href="./game.html?=bot" class="mode-button" id="bot">
+        <img src="./assets/robot.png" alt="" class="mode-btn-img" />
+        <p class="mode-btn-text">Player Vs. Bot</p>
+      </a>
     </div>
   </body>
 </html>
